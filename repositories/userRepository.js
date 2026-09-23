@@ -1,28 +1,28 @@
 
-import User from '../models/userModel.js';
+import User from "../models/userModel.js";
 
-const findUserById = async (id) => {
-    return await User.findByPk(id);
-};
 
-const findUserByUsername = async (username) => {
+// Find user by username
+export const findUserByUsername = async (username) => {
     return await User.findOne({
         where: {
-            username
+            username: username
         }
     });
 };
 
-const findUserByEmail = async (email) => {
+
+// Find user by email
+export const findUserByEmail = async (email) => {
     return await User.findOne({
         where: {
-            email
+            email: email
         }
     });
 };
 
-export {
-    findUserById,
-    findUserByUsername,
-    findUserByEmail
+
+// Create new user
+export const createUser = async (data) => {
+    return await User.create(data);
 };

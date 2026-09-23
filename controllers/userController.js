@@ -1,79 +1,96 @@
 
 import {
-    getUserById,
-    getUserByUsername,
-    getUserByEmail
-} from '../services/userService.js';
+    registerUser,
+    loginUser
+} from "../services/userService.js";
+
+import {
+    createUserSchema,
+    logInUserSchema
+} from "../schemas/userSchema.js";
 
 
-// Get user by ID
-const getUserByIdController = async (req, res) => {
+// Register user
+export const register = async (req, res) => {
+
+    const result = await createUserSchema.safeParseAsync(req.body);
+
+    console.log("method:", req.method);
+
+    if (!result.success) {
+
+        console.log(result.error);
+
+        return res.status(400).json({
+            error: result.error.message
+        });
+    }
+
     try {
-        const { id } = req.params;
 
-        const user = await getUserById(id);
+        const createdUser = await registerUser(result.data);
 
-        return res.status(200).json({
-            message: 'User found successfully',
-            user
+        return res.status(201).json({
+            createdUser
         });
 
-    } catch (error) {
-        console.error('Error finding user by ID:', error);
+    } catch (err) {
 
-        return res.status(404).json({
-            message: error.message
+        return res.status(500).json({
+            error: err.message
         });
     }
 };
 
 
-// Get user by username
-const getUserByUsernameController = async (req, res) => {
-    try {
-        const { username } = req.params;
+// Login user
+export const login = async (req, res) => {
 
-        const user = await getUserByUsername(username);
+    const result = await logInUserSchema.safeParseAsync(req.body);
+
+    console.log("method:", req.method);
+
+    if (!result.success) {
+
+        console.log(result.error);
+
+        return res.status(400).json({
+            error: result.error.message
+        });
+    }
+
+    try {
+
+        const resultData = await loginUser(result.data);
 
         return res.status(200).json({
-            message: 'User found successfully',
-            user
+            message: "Login successful",
+            ...resultData
         });
 
-    } catch (error) {
-        console.error('Error finding user by username:', error);
+    } catch (err) {
 
-        return res.status(404).json({
-            message: error.message
+        return res.status(401).json({
+            error: err.message
         });
     }
 };
 
 
-// Get user by email
-const getUserByEmailController = async (req, res) => {
-    try {
-        const { email } = req.params;
+// Get authenticated user's profile
+export const profile = async (req, res) => {
 
-        const user = await getUserByEmail(email);
-
-        return res.status(200).json({
-            message: 'User found successfully',
-            user
-        });
-
-    } catch (error) {
-        console.error('Error finding user by email:', error);
-
-        return res.status(404).json({
-            message: error.message
-        });
-    }
+    return res.status(200).json({
+        message: "Authenticated successfully",
+        user: req.user
+    });
 };
 
 
-export {
-    getUserByIdController,
-    getUserByUsernameController,
-    getUserByEmailController
+// Logout user
+export const logout = async (req, res) => {
+
+    return res.status(200).json({
+        message: "Logout successful"
+    });
 };

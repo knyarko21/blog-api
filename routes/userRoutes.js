@@ -1,25 +1,41 @@
 
-import express from 'express';
+import { Router } from "express";
 
 import {
-    getUserByIdController,
-    getUserByUsernameController,
-    getUserByEmailController
-} from '../controllers/userController.js';
+    register,
+    login,
+    profile,
+    logout
+} from "../controllers/userController.js";
 
-const router = express.Router();
-
-
-// GET user by ID
-router.get('/id/:id', getUserByIdController);
+import authMiddleware from "../middleware/authMiddleware.js";
 
 
-// GET user by username
-router.get('/username/:username', getUserByUsernameController);
+const router = Router();
 
 
-// GET user by email
-router.get('/email/:email', getUserByEmailController);
+// Register
+router.post("/register", register);
+
+
+// Login
+router.post("/login", login);
+
+
+// Protected profile route
+router.get(
+    "/profile",
+    authMiddleware,
+    profile
+);
+
+
+// Logout
+router.post(
+    "/logout",
+    authMiddleware,
+    logout
+);
 
 
 export default router;

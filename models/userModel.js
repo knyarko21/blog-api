@@ -1,8 +1,8 @@
 
-import { DataTypes } from 'sequelize';
-import sequelize from '../database/dbConnection.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../database/dbConnection.js";
 
-const User = sequelize.define('User', {
+const User = sequelize.define("User", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -19,12 +19,6 @@ const User = sequelize.define('User', {
         allowNull: false
     },
 
-    username: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
-        unique: true
-    },
-
     email: {
         type: DataTypes.STRING(100),
         allowNull: false,
@@ -34,6 +28,12 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+
+    username: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        unique: true
     }
 });
 

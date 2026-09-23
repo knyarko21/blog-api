@@ -1,49 +1,91 @@
 
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 import {
-    findUserById,
     findUserByUsername,
-    findUserByEmail
-} from '../repositories/userRepository.js';
+    findUserByEmail,
+    createUser
+} from "../repositories/userRepository.js";
 
 
-// Get user by ID
-const getUserById = async (id) => {
-    const user = await findUserById(id);
+// Register user
+export const registerUser = async (data) => {
 
-    if (!user) {
-        throw new Error('User not found');
+    // Check if username already exists
+    const existingUsername = await findUserByUsername(data.username);
+
+    if (existingUsername) {
+        throw new Error("Username already exists");
     }
+
+
+    // Check if email already exists
+    const existingEmail = await findUserByEmail(data.email);
+
+    if (existingEmail) {
+        throw new Error("Email already exists");
+    }
+
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+
+    // Create user
+    const createdUser = await createUser({
+        ...data,
+        password: hashedPassword
+    });
+
+
+    // Remove password from returned object
+    const user = createdUser.toJSON();
+
+    delete user.password;
+
 
     return user;
 };
 
 
-// Get user by username
-const getUserByUsername = async (username) => {
-    const user = await findUserByUsername(username);
+// Login user
+export const loginUser = async (data) => {
+
+    // Find user by email
+    const user = await findUserByEmail(data.email);
 
     if (!user) {
-        throw new Error('User not found');
+        throw new Error("Invalid email or password");
     }
 
-    return user;
-};
 
+    // Compare password
+    const passwordMatch = await bcrypt.compare(
+        data.password,
+        user.password
+    );
 
-// Get user by email
-const getUserByEmail = async (email) => {
-    const user = await findUserByEmail(email);
-
-    if (!user) {
-        throw new Error('User not found');
+    if (!passwordMatch) {
+        throw new Error("Invalid email or password");
     }
 
-    return user;
-};
+
+    // Create JWT token
+    const token = jwt.sign(
+        {
+            id: user.id,
+            email: user.email,
+            username: user.username
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: "1h"
+        }
+    );
 
 
-export {
-    getUserById,
-    getUserByUsername,
-    getUserByEmail
+    return {
+        token
+    };
 };

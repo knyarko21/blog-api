@@ -1,26 +1,41 @@
 
-import { z } from 'zod';
+import * as zod from "zod";
 
-const userSchema = z.object({
-    firstName: z
+export const createUserSchema = zod.object({
+    firstName: zod
         .string()
-        .min(2, 'First name must be at least 2 characters'),
+        .min(1)
+        .trim(),
 
-    lastName: z
+    lastName: zod
         .string()
-        .min(2, 'Last name must be at least 2 characters'),
+        .min(1)
+        .trim(),
 
-    username: z
-        .string()
-        .min(3, 'Username must be at least 3 characters'),
+    email: zod
+        .email()
+        .trim(),
 
-    email: z
-        .string()
-        .email('Invalid email address'),
+    password: zod
+        .string({
+            error: "password required"
+        })
+        .min(6),
 
-    password: z
+    username: zod
         .string()
-        .min(6, 'Password must be at least 6 characters')
+        .min(3)
+        .trim()
 });
 
-export default userSchema;
+
+export const logInUserSchema = zod.object({
+    email: zod
+        .email()
+        .trim(),
+
+    password: zod
+        .string()
+        .trim()
+});
+
