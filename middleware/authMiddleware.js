@@ -1,12 +1,10 @@
 
 import jwt from "jsonwebtoken";
 
-
 const authMiddleware = (req, res, next) => {
 
     // Get the Authorization header
     const authHeader = req.headers.authorization;
-
 
     // Check if Authorization header exists
     if (!authHeader) {
@@ -16,7 +14,6 @@ const authMiddleware = (req, res, next) => {
         });
     }
 
-
     // Check that the header starts with Bearer
     if (!authHeader.startsWith("Bearer ")) {
 
@@ -25,10 +22,8 @@ const authMiddleware = (req, res, next) => {
         });
     }
 
-
     // Get the token
     const token = authHeader.split(" ")[1];
-
 
     try {
 
@@ -38,10 +33,8 @@ const authMiddleware = (req, res, next) => {
             process.env.JWT_SECRET
         );
 
-
         // Store decoded user information
         req.user = decoded;
-
 
         // Continue to the next middleware/controller
         next();
@@ -53,6 +46,5 @@ const authMiddleware = (req, res, next) => {
         });
     }
 };
-
 
 export default authMiddleware;

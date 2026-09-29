@@ -1,41 +1,56 @@
 
 import * as zod from "zod";
 
+
+// ===============================
+// Create user schema
+// ===============================
+
 export const createUserSchema = zod.object({
+
     firstName: zod
         .string()
-        .min(1)
-        .trim(),
+        .trim()
+        .min(1, "First name is required"),
 
     lastName: zod
         .string()
-        .min(1)
-        .trim(),
+        .trim()
+        .min(1, "Last name is required"),
 
     email: zod
-        .email()
-        .trim(),
+        .string()
+        .trim()
+        .email("Invalid email"),
 
     password: zod
         .string({
-            error: "password required"
+            error: "Password is required"
         })
-        .min(6),
+        .min(6, "Password must be at least 6 characters"),
 
     username: zod
         .string()
-        .min(3)
         .trim()
+        .min(3, "Username must be at least 3 characters")
+
 });
 
 
+// ===============================
+// Login user schema
+// ===============================
+
 export const logInUserSchema = zod.object({
+
     email: zod
-        .email()
-        .trim(),
+        .string()
+        .trim()
+        .email("Invalid email"),
 
     password: zod
         .string()
         .trim()
-});
+        .min(1, "Password is required")
 
+});
